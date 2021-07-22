@@ -32,7 +32,6 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
         initFile();
 
@@ -41,6 +40,8 @@ public class Main extends JavaPlugin {
                 .map(SakuraPlayer::getName)
                 .map(s -> " - " + s)
                 .forEach(Main::log);
+
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
     /**
@@ -59,6 +60,13 @@ public class Main extends JavaPlugin {
             //插件文件夹不存在时
             log("正在创建插件文件夹...");
             getDataFolder().mkdir();
+        }
+
+        final File configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            //配置文件不存在时
+            log("正在创建默认配置文件...");
+            saveDefaultConfig();
         }
 
         final File playersFolder = new File(getDataFolder(), "players");

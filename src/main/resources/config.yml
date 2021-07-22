@@ -1,0 +1,45 @@
+# 活跃点数设置
+active-points:
+  # 每天最多获得的点数
+  max-points-per-day: 10.0
+  # 挖掘1个方块获得活跃点数
+  mine:
+    # 是否开启
+    enable: true
+    # 获得点数，默认为0.02
+    points: 0.02
+  # 放置1个方块获得活跃点数
+  place:
+    # 是否开启
+    enable: true
+    # 获得点数，默认为0.01
+    points: 0.01
+  # 被邀请玩家在线1秒所获得的活跃点数
+  bind:
+    # 是否开启
+    enable: true
+    # 获得点数，默认为0.0002
+    points : 0.0002
+
+# 挂机设置
+idle:
+  # 挂机时间阈值，若超过该数字则计算进入挂机状态
+  # 默认为3秒
+  threshold: 3
+  # 挂机状态时获得的活跃点数倍率
+  # 默认为挂机时获得的活跃点数x0.5
+  reduce-rate: 0.5
+
+# 自动保存玩家数据设置
+auto-save:
+  # 是否开启
+  enable: true
+  # 保存周期（tick）
+  # 默认为6000ticks（5分钟）
+  period: 6000
+
+# 邀请设置
+bind:
+  # 被邀请玩家最大活跃时长
+  # 默认86400秒
+  newbie-active-threshold: 86400

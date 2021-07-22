@@ -1,8 +1,12 @@
 package cn.fusionfish.sakuraplayer.player;
 
+import cn.fusionfish.sakuraplayer.Main;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,12 +29,20 @@ public class SakuraPlayer {
     private final String ip;
 
     //储存玩家活跃点数
-    private int activePoints;
+    private double activePoints;
+
+    //储存今日获得活跃点数
+    private double activePointsToday;
+
+    //上次获得点数的日期
+    private long lastAddActive;
 
     //储存绑定的玩家
     private final Set<UUID> bindings = Sets.newLinkedHashSet();
 
-    private transient boolean idle;
+
+
+    private transient boolean idle = false;
 
     public SakuraPlayer(String name, UUID uuid, long activeTime, String ip) {
         this.name = name;
@@ -55,7 +67,7 @@ public class SakuraPlayer {
         return ip;
     }
 
-    public int getActivePoints() {
+    public double getActivePoints() {
         return activePoints;
     }
 
@@ -63,12 +75,20 @@ public class SakuraPlayer {
         return bindings;
     }
 
+    public double getActivePointsToday() {
+        return activePointsToday;
+    }
+
+    public long getLastAddActive() {
+        return lastAddActive;
+    }
+
     public void setActivePoints(int activePoints) {
         this.activePoints = activePoints;
     }
 
-    public void setActiveTime(long activeTime) {
-        this.activeTime = activeTime;
+    public void setActivePointsToday(double activePointsToday) {
+        this.activePointsToday = activePointsToday;
     }
 
     public boolean isIdle() {
@@ -81,11 +101,16 @@ public class SakuraPlayer {
 
     public void bind(UUID uuid) {
         PlayerManager manager = PlayerManager.getInstance();
-
+        FileConfiguration config = Main.getInstance().getConfig();
         SakuraPlayer player = manager.getPlayer(uuid);
 
         if (player == null) {
             //被绑定玩家未登陆过服务器
+            throw new IllegalArgumentException();
+        }
+
+        if (uuid.equals(getUuid())) {
+            //被绑定玩家为自己
             throw new IllegalArgumentException();
         }
 
@@ -96,8 +121,8 @@ public class SakuraPlayer {
             throw new IllegalArgumentException();
         }
 
-        if (player.getActiveTime() > 86400000L) {
-            //被绑定玩家的在线时长超过24小时
+        if (player.getActiveTime() > config.getLong("bind.newbie-active-threshold", 86400L)) {
+            //被绑定玩家的在线时长超过阈值
             throw new IllegalArgumentException();
         }
         bindings.add(uuid);
@@ -107,7 +132,41 @@ public class SakuraPlayer {
         bind(Bukkit.getPlayerUniqueId(name));
     }
 
+    /**
+     * 增加活跃时长
+     * @param period 活跃时长
+     */
     public void addOnlineTime(int period) {
         activeTime += period;
+    }
+
+    /**
+     * 增加活跃点数
+     * @param points 活跃度点数
+     */
+    public void addActivePoints(double points) {
+        FileConfiguration config = Main.getInstance().getConfig();
+
+        Date now = new Date();
+        Date last = new Date(getLastAddActive());
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        //是否为同一天
+        final boolean isSameDay = fmt.format(now).equals(fmt.format(last));
+
+        if (isIdle()) points *= config.getDouble("idle.reduce-rate", 0.5);
+
+        if (!isSameDay) {
+            //不是同一天，归零
+            setActivePointsToday(0);
+        }
+        if ((10D - getActivePointsToday()) >= points) {
+            activePoints += points;
+            activePointsToday += points;
+        } else {
+            activePoints += 10D - getActivePointsToday();
+            activePointsToday = 10D;
+        }
+
+        lastAddActive = now.getTime();
     }
 }
