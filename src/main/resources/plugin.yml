@@ -1,0 +1,5 @@
+name: SakuraPlayer
+author: FusionFish
+version: 1.0
+api-version: 1.16
+main: cn.fusionfish.sakuraplayer.Main
