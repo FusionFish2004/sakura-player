@@ -1,5 +1,8 @@
 package cn.fusionfish.sakuraplayer;
 
+import cn.fusionfish.sakuraplayer.command.BindCommand;
+import cn.fusionfish.sakuraplayer.command.PlayerMainCommand;
+import cn.fusionfish.sakuraplayer.command.CommandManager;
 import cn.fusionfish.sakuraplayer.listeners.PlayerListener;
 import cn.fusionfish.sakuraplayer.player.PlayerManager;
 import cn.fusionfish.sakuraplayer.player.SakuraPlayer;
@@ -16,9 +19,14 @@ public class Main extends JavaPlugin {
 
     private static Main instance;
     private PlayerManager manager;
+    private CommandManager commandManager;
 
     public PlayerManager getManager() {
         return manager;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
     /**
@@ -33,6 +41,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+
         initFile();
 
         manager = new PlayerManager();
@@ -42,6 +51,9 @@ public class Main extends JavaPlugin {
                 .forEach(Main::log);
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+
+        commandManager = new CommandManager(this);
+        commandManager.registerCommand(new PlayerMainCommand());
     }
 
     /**
@@ -49,7 +61,7 @@ public class Main extends JavaPlugin {
      * @param string 信息
      */
     public static void log(String string) {
-        Main.getInstance().getLogger().info(string);
+        Main.getInstance().getLogger().info("§b" + string);
     }
 
     /**
@@ -81,5 +93,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         //保存所有数据
         manager.saveAll();
+
+        commandManager.unregisterCommands();
     }
 }

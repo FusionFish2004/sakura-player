@@ -111,7 +111,7 @@ public class PlayerManager {
                                 .map(PlayerManager.this::getPlayer)
                                 .filter(sakuraPlayer -> !sakuraPlayer.isIdle())
                                 .forEach(sakuraPlayer ->
-                                    player.addActivePoints(config.getDouble("active-points.bind.points", 0.02D))
+                                    player.addActivePoints(config.getDouble("active-points.bind.points", 0.0002D))
                                 )
                     );
         }

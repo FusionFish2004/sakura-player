@@ -99,7 +99,7 @@ public class SakuraPlayer {
         this.idle = idle;
     }
 
-    public void bind(UUID uuid) {
+    public void bind(UUID uuid) throws IllegalArgumentException {
         PlayerManager manager = PlayerManager.getInstance();
         FileConfiguration config = Main.getInstance().getConfig();
         SakuraPlayer player = manager.getPlayer(uuid);
@@ -113,6 +113,7 @@ public class SakuraPlayer {
             //被绑定玩家为自己
             throw new IllegalArgumentException();
         }
+
 
         if (manager.getPlayers()
                 .stream()
