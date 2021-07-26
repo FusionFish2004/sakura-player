@@ -163,6 +163,6 @@ public abstract class SimpleCommand extends Command {
     public abstract void onCommand();
 
     public void sendMsg(String msg) {
-        sender.sendMessage("§9§l" + plugin.getName() + "§6§l >> §c" + msg);
+        sender.sendMessage("§c" + msg);
     }
 }

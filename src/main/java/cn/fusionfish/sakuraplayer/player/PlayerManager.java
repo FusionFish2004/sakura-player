@@ -36,7 +36,13 @@ public class PlayerManager {
                     .stream()
                     .map(PlayerManager.this::getPlayer)
                     .filter(player -> !player.isIdle())
-                    .forEach(player -> player.addOnlineTime(1));
+                    .forEach(player -> {
+                        player.addOnlineTime(1);
+                        if (config.getBoolean("active-points.active.enable", true)) {
+                            //开启在线获得活跃点数
+                            player.addActivePoints(config.getDouble("active-points.active.points", 0.0002));
+                        }
+                    });
         }
     };
 

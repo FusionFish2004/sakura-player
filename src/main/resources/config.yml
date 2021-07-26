@@ -14,6 +14,12 @@ active-points:
     enable: true
     # 获得点数，默认为0.01
     points: 0.01
+  # 玩家活跃1秒所获得的活跃点数
+  active:
+    # 是否开启
+    enable: true
+    # 获得点数，默认为0.0002
+    points: 0.0002
   # 被邀请玩家在线1秒所获得的活跃点数
   bind:
     # 是否开启
